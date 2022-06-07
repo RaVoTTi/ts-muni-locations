@@ -11,7 +11,7 @@ import { router as userRoute } from './user/user.routes';
 
 // PATH /api/v1/
 
-router.use('/book', bookRoute);
-router.use('/location', locationRoute);
-router.use('/category', categoryRoute);
+// router.use('/book', bookRoute);
+// router.use('/location', locationRoute);
+// router.use('/category', categoryRoute);
 router.use('/user', userRoute);

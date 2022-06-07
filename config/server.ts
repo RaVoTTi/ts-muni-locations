@@ -10,7 +10,7 @@ import helmet from 'helmet'
 import fileUpload from 'express-fileupload'
 
 // DATABASE
-import dbConnection from './database'
+import db from './database'
 
 // HELPERS
 // import { validateJwt } from '../helpers/validate-JWT'
@@ -25,9 +25,9 @@ export default class Server {
     public url: string = process.env.API_URL || '/api'
 
     constructor() {
+        this.dbConnection()
         this.middlewares()
         this.routes()
-        dbConnection()
     }
     // ROUTES
     routes() {
@@ -68,7 +68,14 @@ export default class Server {
         this.app.use("/public/uploads", express.static(`${process.env.PWD}/public/uploads`)) 
             
     }
-
+    async dbConnection(){
+				try {
+					await db.authenticate();
+					console.log('Connection has been established successfully.');
+				} catch (error) {
+					console.error('Unable to connect to the database:', error);
+				}
+		}
     // LISTEN
     listen() {
         this.app.listen(this.port, () => {

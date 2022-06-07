@@ -1,97 +1,100 @@
-import { Request, Response } from 'express'
-import resIdError from '../../utils/res-idError'
-import { User } from './user.models'
+import { Request, Response } from 'express';
+import resIdError from '../../utils/res-idError';
+import { User } from '../user/user.models';
+import bcrypt from 'bcrypt';
 
-export const userGetByJWT = async (req: Request, res: Response) => {
-    const { _id } = req.user
+export const userGet = async (req: Request, res: Response) => {
+	const query = { state: true };
+	const users = await User.findAll()
+	res.status(200).json({
+		ok: true,
+		msg: [],
+		result: users,
+	});
+};
 
-    const user = await User.findOne({ $and: [{ _id }, { state: true }] })
+// export const userGetCount = async (req: Request, res: Response) => {
+// 	const users = await User.count();
 
-    if (!user) return resIdError(res)
+// 	res.status(200).json({
+// 		ok: true,
+// 		msg: [],
+// 		result: users,
+// 	});
+// };
 
-    res.status(200).json({
-        ok: true,
-        msg: [],
-        result: user,
-    })
-}
+// export const userGetById = async (req: Request, res: Response) => {
+// 	const { id: _id } = req.params;
 
+// 	const user = await User.findOne({ _id });
 
+// 	if (!user) return resIdError(res);
 
-export const userPhonePutByJWT = async (req: Request, res: Response) => {
-    const { user } = req
+// 	res.status(200).json({
+// 		ok: true,
+// 		msg: [],
+// 		result: user,
+// 	});
+// };
 
-    const { phone } = req.body
+// export const userPostByAdmin = async (req: Request, res: Response) => {
+// 	const {
+// 		password: noHashPassword,
+// 		cryptoAddress,
+// 		address,
+// 		...rest
+// 	} = req.body;
 
-    const newUser = await User.findOneAndUpdate(
-        { $and: [{ _id: user._id }, { state: true }] },
-        { phone }
-    )
-    if (!newUser) return resIdError(res)
+// 	const salt = bcrypt.genSaltSync(7);
+// 	const password = bcrypt.hashSync(noHashPassword, salt);
 
-    res.status(201).json({
-        ok: true,
-        msg: ['User modificated succesful'],
-    })
-}
-export const userAddressPutByJWT = async (req: Request, res: Response) => {
-    const { user } = req
+// 	const user = new User({
+// 		...rest,
+// 		address,
+// 		cryptoAddress,
+// 		password,
+// 	});
 
-    const { street, apartament, city, zip, country } = req.body
+// 	await user.save();
 
-    const address = {
-        street,
-        apartament,
-        city,
-        zip,
-        country,
-    }
+// 	res.status(201).json({
+// 		ok: true,
+// 		msg: ['User created succesful'],
+// 	});
+// };
+// export const userPutByAdmin = async (req: Request, res: Response) => {
+// 	const { id: _id } = req.params;
 
-    const newUser = await User.findOneAndUpdate(
-        { $and: [{ _id: user._id }, { state: true }] },
-        { address }
-    )
-    if (!newUser) return resIdError(res)
+// 	const { password: noHashPassword, email, ...rest } = req.body;
+// 	const emailExist = await User.findOne({ email });
 
-    res.status(201).json({
-        ok: true,
-        msg: ['User modificated succesful'],
-    })
-}
-export const userCryptoAddressPutByJWT = async (
-    req: Request,
-    res: Response
-) => {
-    const { user } = req
+// 	if (emailExist && emailExist._id != _id) {
+// 		return res.status(400).json({
+// 			ok: false,
+// 			msg: [`The email "${email}" is register!!`],
+// 		});
+// 	}
 
-    const { cryptoType, wallet } = req.body
+// 	const salt = bcrypt.genSaltSync(7);
+// 	const password = bcrypt.hashSync(noHashPassword, salt);
 
-    const cryptoAddress = { cryptoType, wallet }
+// 	const user = await User.findOneAndUpdate({ _id }, { password, ...rest });
 
-    const newUser = await User.findOneAndUpdate(
-        { $and: [{ _id: user._id }, { state: true }] },
-        { cryptoAddress }
-    )
-    if (!newUser) return resIdError(res)
+// 	res.status(201).json({
+// 		ok: true,
+// 		msg: ['User updated succesful'],
+// 	});
+// };
 
-    res.status(201).json({
-        ok: true,
-        msg: ['User modificated succesful'],
-    })
-}
+// export const userDelete = async (req: Request, res: Response) => {
+// 	const { id: _id } = req.params;
 
-// export const userDeleteByJWT = async (req: Request, res: Response) => {
-//     const { user } = req
+// 	const user = await User.findOneAndDelete({ _id });
 
-//     const newUser = await User.findOneAndUpdate(
-//         { $and: [{ _id:user._id }, { state: true }] },
-//         { state: false }
-//     )
+// 	if (!user) return resIdError(res);
 
-//     if (!newUser) return resIdError(res)
-
-//     res.status(200).json({
-//         ok: true,
-//         msg: ['User remove succesful'],
-//     })
-// }
+// 	res.status(200).json({
+// 		ok: true,
+// 		msg: ['User remove succesful'],
+// 	});
+// };
